@@ -328,7 +328,11 @@ with st.sidebar:
   add_new_doc = st.button("Your Document")
   if add_new_doc:
     new_doc_modal.open()
- 
+    
+  st.divider()
+  st.subheader("Your Documents")
+  st.divider()
+
   st.subheader("Recent")
   allhistories = st.session_state.all_chat_history
   for k in allhistories.keys():
