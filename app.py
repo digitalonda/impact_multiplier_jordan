@@ -304,7 +304,7 @@ with st.sidebar:
   #doc_options = st.multiselect('Select the documents to query',all_docs.keys(),format_func = lambda x: all_docs[x] if x in all_docs else x,)
   if not "system_prompt" in st.session_state:
     st.session_state.system_prompt =   '''You are an AI Assistant specialized in creating social media captions. Based on the style of the example posts provided in CONTEXT below, craft a caption using the content input by the user.'''   
-  system_prompt = st.text_area("System Prompt",key="system_prompt") 
+  system_prompt = st.text_area("System Prompt",st.session_state.system_prompt,key="system_prompt") 
    
   prompt_save = st.button("Save Prompt")
   if prompt_save:
