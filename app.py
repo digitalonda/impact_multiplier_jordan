@@ -331,6 +331,12 @@ with st.sidebar:
     
   st.divider()
   st.subheader("Your Documents")
+  for idx,doc_title in st.session_state.all_docs.items():
+    checked = False
+    if idx in st.session_state.selected_docs.keys():
+        checked = True
+    st.checkbox(doc_title,checked,idx,on_change=add_selected_docs,args=(idx,doc_title) )
+    
   st.divider()
 
   st.subheader("Recent")
