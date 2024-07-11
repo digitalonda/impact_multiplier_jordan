@@ -305,7 +305,7 @@ with st.sidebar:
     metadata = {"doc_id":document_id,"text": system_prompt}
     data = [{ "id": document_id, "values":default_vec_embedding, "metadata": metadata}]
     add_to_index(data, "system_prompt")
-    st.session_state.system_prompt = system_prompt
+     
 
   api_option = st.selectbox(
     'Select the API',
