@@ -227,21 +227,8 @@ new_doc_modal = Modal(
 )
 if new_doc_modal.is_open():
     with new_doc_modal.container():
-        tab0,tab1, tab2 = st.tabs(["Your Documents","Upload Document", "Youtube"])
-        with tab0:
-            for idx,doc_title in st.session_state.all_docs.items():
-                checked = False
-                if idx in st.session_state.selected_docs.keys():
-                    checked = True
-                st.checkbox(doc_title,checked,idx,on_change=add_selected_docs,args=(idx,doc_title) )
-
-           
-            if st.button("Delete Selected Documents") :
-                if len(st.session_state.selected_docs) > 0:
-                    delete_docs(st.session_state.selected_docs.keys())    
-                    st.session_state.selected_docs = {}
-                    save_selected_docs()
-                    new_doc_modal.close()
+        tab1, tab2 = st.tabs(["Upload Document", "Youtube"])
+         
 
         with tab1:
             uploaded_file = st.file_uploader("Choose a document file",type=["docx","doc","txt","rtf","pdf"])
@@ -334,7 +321,7 @@ with st.sidebar:
     checked = False
     if idx in st.session_state.selected_docs.keys():
         checked = True
-    st.checkbox(doc_title,checked,idx,on_change=add_selected_docs,args=(idx,doc_title) )
+    st.checkbox(doc_title,checked,idx,on_change=add_selected_docs,args=(idx,doc_title))
 
            
   if st.button("Delete Selected Documents") :
