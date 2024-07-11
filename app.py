@@ -211,7 +211,14 @@ if not "selected_docs" in st.session_state:
     st.session_state.selected_docs = {}
 retrive_selected_docs()
 
-    
+def retrive_system_prompt():
+    sd = get_from_index_raw(default_vec_embedding,top_k=1,nsp="system_prompt")
+    if len(sd) > 0:
+        sd = sd[0]
+        return sd["metadata"]["text"] 
+    else:
+        return '''You are an AI Assistant specialized in creating social media captions. Based on the style of the example posts provided in CONTEXT below, craft a caption using the content input by the user.'''    
+
 new_doc_modal = Modal(
     "Add New Document", 
     key="new-doc-modal",
@@ -298,20 +305,20 @@ if not "all_chat_history" in st.session_state:
     st.session_state.all_chat_history = get_all_history_list()
 
  
-
 with st.sidebar:
   #st.subheader("Select Your Documents")  
   #doc_options = st.multiselect('Select the documents to query',all_docs.keys(),format_func = lambda x: all_docs[x] if x in all_docs else x,)
   if not "system_prompt" in st.session_state:
-    st.session_state.system_prompt =   '''You are an AI Assistant specialized in creating social media captions. Based on the style of the example posts provided in CONTEXT below, craft a caption using the content input by the user.'''   
+    st.session_state.system_prompt = retrive_system_prompt()  
   system_prompt = st.text_area("System Prompt",st.session_state.system_prompt,key="system_prompt") 
-   
+  
   prompt_save = st.button("Save Prompt")
   if prompt_save:
     document_id = "system_prompt"
     metadata = {"doc_id":document_id,"text": system_prompt}
     data = [{ "id": document_id, "values":default_vec_embedding, "metadata": metadata}]
     add_to_index(data, "system_prompt")
+    st.session_state.system_prompt = system_prompt
 
   api_option = st.selectbox(
     'Select the API',
