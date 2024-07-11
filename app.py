@@ -349,7 +349,7 @@ if your_prompt:
     save_prompt = {"id":str(st.session_state.chat_history["id"])+"_"+str(order),"values":your_prompt_vec,"metadata":{"chat_id":st.session_state.chat_history["id"],"order":order,"role":"user","text":your_prompt}}
 
     data = get_from_index(your_prompt_vec,filter=filter)
-    data = cohere_rerank(your_prompt, data)
+    data = cohere_rerank(your_prompt, data,10)
     
     if api_option == "Anthropic" :
         response = send_llm_claude(data) 
