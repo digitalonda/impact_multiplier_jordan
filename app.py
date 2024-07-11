@@ -308,7 +308,8 @@ with st.sidebar:
    
   prompt_save = st.button("Save Prompt")
   if prompt_save:
-    metadata = {"doc_id": "system_prompt","text": system_prompt}
+    document_id = "system_prompt"
+    metadata = {"doc_id":document_id,"text": system_prompt}
     data = [{ "id": document_id, "values":default_vec_embedding, "metadata": metadata}]
     add_to_index(data, "system_prompt")
 
