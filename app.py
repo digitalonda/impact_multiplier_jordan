@@ -297,14 +297,21 @@ if not "chat_history" in st.session_state:
 if not "all_chat_history" in st.session_state:
     st.session_state.all_chat_history = get_all_history_list()
 
+ 
+
 with st.sidebar:
   #st.subheader("Select Your Documents")  
   #doc_options = st.multiselect('Select the documents to query',all_docs.keys(),format_func = lambda x: all_docs[x] if x in all_docs else x,)
+  if not "system_prompt" in st.session_state:
+    st.session_state.system_prompt =   '''You are an AI Assistant specialized in creating social media captions. Based on the style of the example posts provided in CONTEXT below, craft a caption using the content input by the user.'''   
+  system_prompt = st.text_area("System Prompt",key="system_prompt") 
    
-  system_prompt = st.text_area("System Prompt",
-                               '''You are an AI Assistant specialized in creating social media captions. Based on the style of the example posts provided in CONTEXT below, craft a caption using the content input by the user.'''
-                               ) 
-  st.session_state.system_prompt = system_prompt
+  prompt_save = st.button("Save Prompt")
+  if prompt_save:
+    metadata = {"doc_id": "system_prompt","text": system_prompt}
+    data = [{ "id": document_id, "values":default_vec_embedding, "metadata": metadata}]
+    add_to_index(data, "system_prompt")
+
   api_option = st.selectbox(
     'Select the API',
     ('OpenAI', 'Anthropic'),
