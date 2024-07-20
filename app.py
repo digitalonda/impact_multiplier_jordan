@@ -369,7 +369,6 @@ if not "all_chat_history" in st.session_state:
  
 with st.sidebar:
    
-
   #st.subheader("Select Your Documents")  
   #doc_options = st.multiselect('Select the documents to query',all_docs.keys(),format_func = lambda x: all_docs[x] if x in all_docs else x,)
   if not "system_prompt" in st.session_state:
@@ -396,7 +395,8 @@ with st.sidebar:
     if idx in st.session_state.selected_docs.keys():
         checked = True
     st.checkbox(doc_title,checked,idx,on_change=add_selected_docs,args=(idx,doc_title) )
-  
+    custom_btn("","f1f8")
+
   add_new_doc = st.button("Add Document",key="voice")
   if add_new_doc:
     new_doc_modal.open()
