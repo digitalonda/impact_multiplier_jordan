@@ -6,7 +6,7 @@ def custom_btn(title,icon):
     css = r"""
             button div:before {
                 font-family: 'Font Awesome 5 Free';
-                content: '\ """
+                content: '\\"""
     css = css +  icon
     css = css + r"""';
                 display: inline-block;
