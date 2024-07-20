@@ -450,7 +450,8 @@ with st.sidebar:
       bt = st.button(info,key=k)
       if bt:
         load_history(k)
-       
+
+      st.write(k) 
       click_handle = lambda:delete_single_history(k)
       st.button("Delete",key="btn-history-"+str(k),on_click=click_handle)
 
