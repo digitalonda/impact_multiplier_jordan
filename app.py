@@ -190,8 +190,8 @@ def delete_docs(doc_id,doc_nsp="default",doc_list_nsp="list"):
     d1 = [x["id"] for x in l1]
     d2 = [x["id"] for x in l2]
      
-    #data_index.delete(d1, namespace=doc_nsp)
-    #data_index.delete(d2, namespace=doc_list_nsp)
+    data_index.delete(d1, namespace=doc_nsp)
+    data_index.delete(d2, namespace=doc_list_nsp)
              
 def delete_single_history(chat_id,nsp="chat_history",list_nsp="chat_history_list"):
     filter = {"chat_id": {"$in": chat_id}}
