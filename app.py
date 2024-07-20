@@ -204,8 +204,7 @@ def delete_single_history(chat_id):
     list_nsp="chat_history_list"
     l1 = get_from_index_raw(default_vec_embedding,1000,nsp,filter={"chat_id":k}) 
     d1 = [x["id"] for x in l1]
-    st.write(chat_id)
-    st.write(d1)
+    
     if len(d1)>0:
         data_index.delete(d1, namespace=nsp)
     data_index.delete([chat_id], namespace=list_nsp)
@@ -442,14 +441,13 @@ with st.sidebar:
   st.divider()
 
   st.subheader("Recent")
-  allhistories = st.session_state.all_chat_history
-  for k in allhistories.keys():
-      item = allhistories[k]
+  
+  for k,item in st.session_state.all_chat_history.items():
       info = (item[:30] + '..') if len(item) > 75 else item
       bt = st.button(info,key=k)
       if bt:
         load_history(k)
-
+      st.write(k)  
       st.button("Delete",key="btn-history-"+str(k),on_click=lambda : delete_single_history(k))
 
   st.divider()
