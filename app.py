@@ -201,8 +201,8 @@ def delete_docs(doc_id,doc_nsp="default",doc_list_nsp="list"):
 def delete_single_history(chat_id,nsp="chat_history",list_nsp="chat_history_list"):
     l1 = get_from_index_raw(default_vec_embedding,1000,nsp,filter={"chat_id":k}) 
     d1 = [x["id"] for x in l1]
-    #data_index.delete(d1, namespace=nsp)
-    #data_index.delete([chat_id], namespace=list_nsp)
+    data_index.delete(d1, namespace=nsp)
+    data_index.delete([chat_id], namespace=list_nsp)
 
 if not "all_docs" in st.session_state:
     st.session_state.all_docs = {}
