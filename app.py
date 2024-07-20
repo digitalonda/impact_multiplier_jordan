@@ -395,7 +395,7 @@ with st.sidebar:
     if idx in st.session_state.selected_docs.keys():
         checked = True
     st.checkbox(doc_title,checked,idx,on_change=add_selected_docs,args=(idx,doc_title) )
-    custom_btn("","f1f8",idx,lambda : delete_docs(idx))
+    custom_btn("","f1f8",idx,lambda : delete_docs(idx),"button{float: right;}")
 
   add_new_doc = st.button("Add Document",key="voice")
   if add_new_doc:

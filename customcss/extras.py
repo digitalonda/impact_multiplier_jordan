@@ -2,13 +2,14 @@ import streamlit as st
 from streamlit_extras.stylable_container import stylable_container
 import random
 
-def custom_btn(title,icon,key,on_click_handle=None):
-    css = r"""
+def custom_btn(title,icon,key,on_click_handle=None,extra_css=""):
+    css = extra_css
+    css += r"""
             button div:before {
                 font-family: 'Font Awesome 5 Free';
                 content: '"""
-    css = css +  '\\'+icon
-    css = css + r"""';
+    css += '\\'+icon
+    css += r"""';
                 display: inline-block;
                 padding-right: 3px;
                 vertical-align: middle;
