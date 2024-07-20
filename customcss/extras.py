@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_extras.stylable_container import stylable_container
 import random
 
-def custom_btn(title,icon):
+def custom_btn(title,icon,key,on_click_handle=None):
     css = r"""
             button div:before {
                 font-family: 'Font Awesome 5 Free';
@@ -19,4 +19,4 @@ def custom_btn(title,icon):
         key="container_with_border",
         css_styles=css
     ):
-        st.button(title,key="btn-"+str(random.randint(0, 9999999)))
+        st.button(title,key="btn-"+key,on_click=on_click_handle)
