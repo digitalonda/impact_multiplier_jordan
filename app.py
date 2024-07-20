@@ -308,24 +308,24 @@ with st.sidebar:
 
   api_option = st.selectbox(
     'Select the API',
-    ('Anthropic','OpenAI'),
+    ('Anthropic','OpenAI')
     )
- 
-  
     
   st.divider()
-  st.subheader("Your Documents")
+  st.subheader("Voice")
   for idx,doc_title in st.session_state.all_docs.items():
     checked = False
     if idx in st.session_state.selected_docs.keys():
         checked = True
     st.checkbox(doc_title,checked,idx,on_change=add_selected_docs,args=(idx,doc_title) )
   
-  add_new_doc = st.button("Add Document")
+  add_new_doc = st.button("Add Document",key="voice")
   if add_new_doc:
     new_doc_modal.open()
 
-
+  st.divider()
+  st.subheader("Format & Style")
+  add_new_style = st.button("Add Document",key="format-style")
   st.divider()
 
   st.subheader("Recent")
