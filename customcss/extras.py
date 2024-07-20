@@ -1,9 +1,6 @@
 import streamlit as st
 from streamlit_extras.stylable_container import stylable_container
-st.markdown(
-    '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>',
-    unsafe_allow_html=True,
-)
+
 def custom_btn():
     with stylable_container(
         key="container_with_border",
@@ -18,4 +15,4 @@ def custom_btn():
             }
             """,
     ):
-        st.button("")
+        st.button("11111")

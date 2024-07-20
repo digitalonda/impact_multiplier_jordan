@@ -9,7 +9,7 @@ import re
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import TextFormatter
 
-from customcss import custom_btn
+from customcss.extras import custom_btn
  
 import time
 import tiktoken
@@ -18,6 +18,12 @@ import requests
 import json 
 import docx2txt
 import pdfplumber
+
+
+st.markdown(
+    '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>',
+    unsafe_allow_html=True,
+)
 
 ANTHROPIC_API_KEY = st.secrets['ANTHROPIC_API_KEY']   
 OPENAI_API_KEY = st.secrets['OPENAI_API_KEY']
