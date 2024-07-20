@@ -192,6 +192,11 @@ def delete_docs(doc_id,doc_nsp="default",doc_list_nsp="list"):
      
     data_index.delete(d1, namespace=doc_nsp)
     data_index.delete(d2, namespace=doc_list_nsp)
+
+    if (doc_list_nsp == "list"):
+        remove_selected_docs(doc_id)
+    elif (doc_list_nsp == "list_style"):
+        remove_selected_style_docs(doc_id)
              
 def delete_single_history(chat_id,nsp="chat_history",list_nsp="chat_history_list"):
     filter = {"chat_id": {"$in": chat_id}}
@@ -206,9 +211,11 @@ if not "all_style_docs" in st.session_state:
     st.session_state.all_style_docs = {}
 
 all_docs = get_all_docs() 
-st.session_state.all_docs = all_docs
+if len(all_docs)>0:
+    st.session_state.all_docs = all_docs
 all_style_docs = get_all_style_docs() 
-st.session_state.all_style_docs = all_style_docs
+if len(all_style_docs)>0:
+    st.session_state.all_style_docs = all_style_docs
 
 def retrive_selected_docs():
     sd = get_from_index_raw(default_vec_embedding,top_k=1,nsp="selected_doc")
@@ -242,10 +249,19 @@ def save_selected_style_docs():
 def add_selected_docs(idx,doc_title):
     st.session_state.selected_docs[idx] = doc_title
     save_selected_docs()
+def remove_selected_docs(idx):
+    if idx in st.session_state.selected_docs.keys():
+        st.session_state.selected_docs.pop(idx)
+        save_selected_docs()
 
 def add_selected_style_docs(idx,doc_title):
     st.session_state.selected_style_docs[idx] = doc_title
     save_selected_style_docs()
+
+def remove_selected_style_docs(idx):
+    if idx in st.session_state.selected_style_docs.keys():
+        st.session_state.selected_style_docs.pop(idx)
+        save_selected_style_docs()
 
 if not "selected_docs" in st.session_state:
     st.session_state.selected_docs = {}
@@ -291,9 +307,8 @@ if new_doc_style_modal.is_open():
                 st.write("Document already exists.")
             else:
                 with st.spinner(text="Please patient,it may take some time to process the document."):
-                    all_style_docs[document_id] = title
-                    st.session_state.selected_style_docs[document_id] = title
-                    st.session_state.all_style_docs = all_style_docs 
+                    st.session_state.all_style_docs[document_id] = title
+                  
                     save_doc_to_vecdb(document_id,chunks)
                     save_doc_to_db(document_id,title,"list_style")
                     st.write("Document added successfully.")
@@ -327,13 +342,13 @@ if new_doc_modal.is_open():
                 document_id = slugify(title)
                 tiktoken_encoding = tiktoken.get_encoding("cl100k_base")
                 chunks = split_string_with_limit(string_data, CHUNK_TOKEN_LEN,tiktoken_encoding)
-                if document_id in all_docs.keys():
+                if document_id in st.session_state.all_docs.keys():
                     st.write("Document already exists.")
                 else:
                     with st.spinner(text="Please patient,it may take some time to process the document."):
                         all_docs[document_id] = title
                         st.session_state.selected_docs[document_id] = title
-                        st.session_state.all_docs = all_docs 
+                       
                         save_doc_to_vecdb(document_id,chunks)
                         save_doc_to_db(document_id,title,"list")
                         st.write("Document added successfully.")
@@ -348,7 +363,7 @@ if new_doc_modal.is_open():
        
         if submit_video:
             with st.spinner(text="Please patient,it may take some time to process the document."):
-                if not video_id or video_id in all_docs.keys():
+                if not video_id or video_id in st.session_state.all_docs.keys():
                     st.write("Video already exists.")
                 else:            
                     transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])  
@@ -356,7 +371,7 @@ if new_doc_modal.is_open():
                     formatted_transcript = formatter.format_transcript(transcript)
                         
                     save_doc_to_db(video_id,vid_title,"list")
-                    all_docs[video_id] = vid_title
+                    st.session_state.all_docs[video_id] = vid_title
                         
                     tiktoken_encoding = tiktoken.get_encoding("cl100k_base")
                     chunks = split_string_with_limit(formatted_transcript, CHUNK_TOKEN_LEN,tiktoken_encoding)
@@ -364,7 +379,7 @@ if new_doc_modal.is_open():
                     vid_title = ""
                     vid_url = ""
                     st.write("Document added successfully.")
-                    st.session_state.all_docs = all_docs        
+                         
 
 if not "chat_history" in st.session_state:
     st.session_state.chat_history = {"id":int(time.time()),"history":[]}
