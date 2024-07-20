@@ -202,7 +202,7 @@ def delete_single_history(chat_id):
     
     nsp="chat_history"
     list_nsp="chat_history_list"
-    l1 = get_from_index_raw(default_vec_embedding,1000,nsp,filter={"chat_id":str(int(chat_id))}) 
+    l1 = get_from_index_raw(default_vec_embedding,1000,nsp,filter={"chat_id":chat_id}) 
     d1 = [x["id"] for x in l1]
     st.write(d1)
     if len(d1)>0:
