@@ -183,17 +183,25 @@ def load_history(k):
     
     st.session_state.chat_history = new_history
      
-def delete_docs(doc_id):
+def delete_docs(doc_id,doc_nsp="default",doc_list_nsp="list"):
     fil =get_filter_id(doc_id)
-    l1 = get_from_index_raw(default_vec_embedding,10000,"default",filter=fil) 
-    l2 = get_from_index_raw(default_vec_embedding,10000,"list",filter=fil) 
+    l1 = get_from_index_raw(default_vec_embedding,10000,doc_nsp,filter=fil) 
+    l2 = get_from_index_raw(default_vec_embedding,10000,doc_list_nsp,filter=fil) 
      # delete from index
     d1 = [x["id"] for x in l1]
     d2 = [x["id"] for x in l2]
      
-    data_index.delete(d1, namespace="default")
-    data_index.delete(d2, namespace="list")
+    data_index.delete(d1, namespace=doc_nsp)
+    data_index.delete(d2, namespace=doc_list_nsp)
              
+def delete_history(chat_id,nsp="chat_history",list_nsp="chat_history_list"):
+    filter = {"chat_id": {"$in": chat_id}}
+    l1 = get_from_index_raw(default_vec_embedding,10000,nsp,filter=filter) 
+    l2 = get_from_index_raw(default_vec_embedding,10000,list_nsp,filter=filter) 
+    d1 = [x["id"] for x in l1]
+    d2 = [x["id"] for x in l2]
+    data_index.delete(d1, namespace=nsp)
+    data_index.delete(d2, namespace=list_nsp)
 
 if not "all_docs" in st.session_state:
     st.session_state.all_docs = {}
@@ -409,6 +417,8 @@ with st.sidebar:
     if idx in st.session_state.selected_style_docs.keys():
         checked = True
     st.checkbox(doc_title,checked,idx,on_change=add_selected_style_docs,args=(idx,doc_title) )
+    st.button("Delete",key="btn-"+idx,on_click=lambda : delete_docs(idx,doc_list_nsp="list_style"))
+
   add_new_style = st.button("Add Document",key="format-style")
   if add_new_style:
     new_doc_style_modal.open()
@@ -419,10 +429,12 @@ with st.sidebar:
   for k in allhistories.keys():
       item = allhistories[k]
       info = (item[:30] + '..') if len(item) > 75 else item
-         
       bt = st.button(info,key=k)
       if bt:
         load_history(k)
+
+      st.button("Delete",key="btn-history-"+k,on_click=lambda : delete_docs(idx,doc_list_nsp="list_style"))
+
   st.divider()
   delete_history = st.button("Clear History")
   if delete_history:
