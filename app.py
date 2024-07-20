@@ -210,7 +210,7 @@ def delete_single_history(chat_id):
     st.write(len(d1))
     if len(d1)>0:
         data_index.delete(d1, namespace=nsp)
-    data_index.delete([chat_id], namespace=list_nsp)
+    data_index.delete([str(int(chat_id))], namespace=list_nsp)
 
 if not "all_docs" in st.session_state:
     st.session_state.all_docs = {}
