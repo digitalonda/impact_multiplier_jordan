@@ -199,8 +199,7 @@ def delete_docs(doc_id,doc_nsp="default",doc_list_nsp="list"):
         remove_selected_style_docs(doc_id)
              
 def delete_single_history(chat_id,nsp="chat_history",list_nsp="chat_history_list"):
-    filter = {"chat_id": {"$in": chat_id}}
-    l1 = get_from_index_raw(default_vec_embedding,10000,nsp,filter=filter) 
+    l1 = get_from_index_raw(default_vec_embedding,1000,nsp,filter={"chat_id":k}) 
     d1 = [x["id"] for x in l1]
     data_index.delete(d1, namespace=nsp)
     data_index.delete([chat_id], namespace=list_nsp)
@@ -445,7 +444,7 @@ with st.sidebar:
       if bt:
         load_history(k)
 
-      st.button("Delete",key="btn-history-"+str(k),on_click=lambda : delete_single_history(k))
+      st.button("Delete",key="btn-history-"+str(k),on_click=lambda : delete_single_history(k,"chat_history","chat_history_list"))
 
   st.divider()
   delete_history = st.button("Clear History")
