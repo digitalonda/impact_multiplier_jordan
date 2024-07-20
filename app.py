@@ -184,9 +184,8 @@ def load_history(k):
     st.session_state.chat_history = new_history
      
 def delete_docs(doc_id,doc_nsp="default",doc_list_nsp="list"):
-    fil =get_filter_id(doc_id)
-    l1 = get_from_index_raw(default_vec_embedding,10000,doc_nsp,filter=fil) 
-    l2 = get_from_index_raw(default_vec_embedding,10000,doc_list_nsp,filter=fil) 
+    l1 = get_from_index_raw(default_vec_embedding,1000,doc_nsp,filter={"doc_id":doc_id}) 
+    l2 = get_from_index_raw(default_vec_embedding,1000,doc_list_nsp,filter={"doc_id":doc_id}) 
      # delete from index
     d1 = [x["id"] for x in l1]
     d2 = [x["id"] for x in l2]
@@ -415,7 +414,7 @@ with st.sidebar:
     if idx in st.session_state.selected_style_docs.keys():
         checked = True
     st.checkbox(doc_title,checked,idx,on_change=add_selected_style_docs,args=(idx,doc_title) )
-    st.button("Delete",key="btn-"+idx,on_click=lambda : delete_docs(idx,doc_list_nsp="list_style"))
+    st.button("Delete",key="btn-"+idx,on_click=lambda : delete_docs(idx,"default","list_style"))
 
   add_new_style = st.button("Add Document",key="format-style")
   if add_new_style:
