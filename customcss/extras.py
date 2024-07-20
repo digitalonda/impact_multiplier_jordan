@@ -1,5 +1,6 @@
 import streamlit as st
 from streamlit_extras.stylable_container import stylable_container
+import random
 
 def custom_btn(title,icon):
     css = r"""
@@ -18,4 +19,4 @@ def custom_btn(title,icon):
         key="container_with_border",
         css_styles=css
     ):
-        st.button(title)
+        st.button(title,key="btn-"+str(random.randint(0, 9999999)))
