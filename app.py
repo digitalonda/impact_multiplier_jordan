@@ -8,7 +8,8 @@ from anthropic import Anthropic
 import re
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import TextFormatter
- 
+
+from customcss import custom_btn
  
 import time
 import tiktoken
@@ -79,9 +80,6 @@ def get_llm_prompt(data,format_style):
         if len(format_style):
             system_prompting += "\n [FORMAT & STYLE] \n"
             system_prompting += "\n\n".join(format_style)
-
-    print("system_prompting")
-    print(system_prompting)
 
     our_sms = st.session_state.chat_history["history"]
     our_sms = our_sms[-10:]
@@ -364,6 +362,8 @@ if not "all_chat_history" in st.session_state:
 
  
 with st.sidebar:
+  custom_btn()
+
   #st.subheader("Select Your Documents")  
   #doc_options = st.multiselect('Select the documents to query',all_docs.keys(),format_func = lambda x: all_docs[x] if x in all_docs else x,)
   if not "system_prompt" in st.session_state:
