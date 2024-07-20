@@ -234,6 +234,11 @@ if not "selected_docs" in st.session_state:
     st.session_state.selected_docs = {}
 retrive_selected_docs()
 
+if not "selected_style_docs" in st.session_state:
+    st.session_state.selected_style_docs = {}
+retrive_selected_style_docs()
+
+
 def retrive_system_prompt():
     sd = get_from_index_raw(default_vec_embedding,top_k=1,nsp="system_prompt")
     if len(sd) > 0:
