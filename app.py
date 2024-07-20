@@ -229,7 +229,6 @@ if new_doc_modal.is_open():
     with new_doc_modal.container():
         tab1, tab2 = st.tabs(["Upload Document", "Youtube"])
          
-
         with tab1:
             uploaded_file = st.file_uploader("Choose a document file",type=["docx","doc","txt","rtf","pdf"])
             if uploaded_file is not None: 
@@ -309,7 +308,7 @@ with st.sidebar:
 
   api_option = st.selectbox(
     'Select the API',
-    ('OpenAI', 'Anthropic'),
+    ('Anthropic','OpenAI'),
     )
  
   
