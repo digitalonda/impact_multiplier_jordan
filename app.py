@@ -194,14 +194,12 @@ def delete_docs(doc_id,doc_nsp="default",doc_list_nsp="list"):
     data_index.delete(d1, namespace=doc_nsp)
     data_index.delete(d2, namespace=doc_list_nsp)
              
-def delete_history(chat_id,nsp="chat_history",list_nsp="chat_history_list"):
+def delete_single_history(chat_id,nsp="chat_history",list_nsp="chat_history_list"):
     filter = {"chat_id": {"$in": chat_id}}
     l1 = get_from_index_raw(default_vec_embedding,10000,nsp,filter=filter) 
-    l2 = get_from_index_raw(default_vec_embedding,10000,list_nsp,filter=filter) 
     d1 = [x["id"] for x in l1]
-    d2 = [x["id"] for x in l2]
     data_index.delete(d1, namespace=nsp)
-    data_index.delete(d2, namespace=list_nsp)
+    data_index.delete([chat_id], namespace=list_nsp)
 
 if not "all_docs" in st.session_state:
     st.session_state.all_docs = {}
@@ -290,7 +288,7 @@ if new_doc_style_modal.is_open():
             document_id = slugify(title)
             tiktoken_encoding = tiktoken.get_encoding("cl100k_base")
             chunks = split_string_with_limit(string_data, CHUNK_TOKEN_LEN*2,tiktoken_encoding)
-            if document_id in all_style_docs.keys():
+            if document_id in st.session_state.all_style_docs.keys():
                 st.write("Document already exists.")
             else:
                 with st.spinner(text="Please patient,it may take some time to process the document."):
@@ -433,7 +431,7 @@ with st.sidebar:
       if bt:
         load_history(k)
 
-      st.button("Delete",key="btn-history-"+k,on_click=lambda : delete_docs(idx,doc_list_nsp="list_style"))
+      st.button("Delete",key="btn-history-"+str(k),on_click=lambda : delete_single_history(k))
 
   st.divider()
   delete_history = st.button("Clear History")
