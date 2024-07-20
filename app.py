@@ -79,7 +79,7 @@ def get_llm_prompt(data,format_style):
         if len(format_style):
             system_prompting += "\n [FORMAT & STYLE] \n"
             system_prompting += "\n\n".join(format_style)
-            
+
     print("system_prompting")
     print(system_prompting)
 
@@ -193,6 +193,8 @@ def delete_docs(doc_id):
 
 if not "all_docs" in st.session_state:
     st.session_state.all_docs = {}
+if not "all_style_docs" in st.session_state:
+    st.session_state.all_style_docs = {}
 
 all_docs = get_all_docs() 
 st.session_state.all_docs = all_docs
@@ -280,7 +282,7 @@ if new_doc_style_modal.is_open():
                 st.write("Document already exists.")
             else:
                 with st.spinner(text="Please patient,it may take some time to process the document."):
-                    all_docs[document_id] = title
+                    all_style_docs[document_id] = title
                     st.session_state.selected_style_docs[document_id] = title
                     st.session_state.all_style_docs = all_style_docs 
                     save_doc_to_vecdb(document_id,chunks)
