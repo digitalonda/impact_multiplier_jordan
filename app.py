@@ -368,7 +368,7 @@ if not "all_chat_history" in st.session_state:
 
  
 with st.sidebar:
-  custom_btn()
+   
 
   #st.subheader("Select Your Documents")  
   #doc_options = st.multiselect('Select the documents to query',all_docs.keys(),format_func = lambda x: all_docs[x] if x in all_docs else x,)
