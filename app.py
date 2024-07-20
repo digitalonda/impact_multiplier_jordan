@@ -99,7 +99,7 @@ def get_from_index_raw(vec,top_k=20,nsp="default",filter={}):
 def get_from_index(vec,top_k=20,nsp="default",filter={}):
     res_matches = get_from_index_raw(vec,top_k,nsp,filter)
     docs = [x["metadata"]['text'] for x in res_matches]
-    if nsp == "list" or nsp=="chat_history_list":
+    if nsp == "list" or nsp == "list_style" or nsp=="chat_history_list":
         docs = { x["metadata"]['doc_id']:x["metadata"]['text'] for i, x in enumerate(res_matches)}
     
     return docs
@@ -112,28 +112,31 @@ def get_filter_id(doc_ids):
 def get_all_docs():
     docs = get_from_index(default_vec_embedding,1000,"list")
     return docs
+def get_all_style_docs():
+    docs = get_from_index(default_vec_embedding,1000,"list_style")
+    return docs
 
 def get_all_history_list():
     docs = get_from_index(default_vec_embedding,1000,"chat_history_list")
     return docs
     
-def save_doc_to_db(document_id,title):
+def save_doc_to_db(document_id,title,nsp):
     metadata = {"doc_id": document_id,"text": title}
     data = [{ "id": document_id, "values":get_embedding(title), "metadata": metadata}]
-    add_to_index(data, "list")
+    add_to_index(data, nsp)
 
-def save_doc_to_vecdb(document_id,chunks):
+def save_doc_to_vecdb(document_id,chunks,nsp="default"):
     data = []
     lim = 100
     for idx,chunk in enumerate(chunks):
         metadata = {"doc_id": document_id,"text": chunk}
         data.append({ "id": document_id+"_"+str(idx),"values":get_embedding(chunk),"metadata": metadata})
         if len(data) >= lim:
-            add_to_index(data)
+            add_to_index(data,nsp)
             data = []
                 
     if len(data) > 0 :
-        add_to_index(data)
+        add_to_index(data,nsp)
 
 def slugify(s):
   s = s.lower().strip()
@@ -187,9 +190,21 @@ if not "all_docs" in st.session_state:
 
 all_docs = get_all_docs() 
 st.session_state.all_docs = all_docs
+all_style_docs = get_all_style_docs() 
+st.session_state.all_style_docs = all_style_docs
 
 def retrive_selected_docs():
     sd = get_from_index_raw(default_vec_embedding,top_k=1,nsp="selected_doc")
+    
+    if len(sd) > 0:
+        sd = sd[0]
+        keys = sd["metadata"]["keys"].split(",")
+        values = sd["metadata"]["values"].split(",")
+        for idx,key in enumerate(keys):
+            st.session_state.selected_docs[key] = values[idx]
+
+def retrive_selected_style_docs():
+    sd = get_from_index_raw(default_vec_embedding,top_k=1,nsp="selected_style_doc")
     
     if len(sd) > 0:
         sd = sd[0]
@@ -202,10 +217,18 @@ def save_selected_docs():
     metadata = {"keys": ",".join(st.session_state.selected_docs.keys()),"values": ",".join(st.session_state.selected_docs.values())}
     data = [{ "id": "selected_doc", "values":default_vec_embedding, "metadata": metadata}]
     add_to_index(data, "selected_doc") 
+def save_selected_style_docs():
+    metadata = {"keys": ",".join(st.session_state.selected_style_docs.keys()),"values": ",".join(st.session_state.selected_style_docs.values())}
+    data = [{ "id": "selected_style_doc", "values":default_vec_embedding, "metadata": metadata}]
+    add_to_index(data, "selected_style_doc") 
 
 def add_selected_docs(idx,doc_title):
     st.session_state.selected_docs[idx] = doc_title
     save_selected_docs()
+
+def add_selected_style_docs(idx,doc_title):
+    st.session_state.selected_style_docs[idx] = doc_title
+    save_selected_style_docs()
 
 if not "selected_docs" in st.session_state:
     st.session_state.selected_docs = {}
@@ -218,6 +241,42 @@ def retrive_system_prompt():
         return sd["metadata"]["text"] 
     else:
         return '''You are an AI Assistant specialized in creating social media captions. Based on the style of the example posts provided in CONTEXT below, craft a caption using the content input by the user.'''    
+
+new_doc_style_modal = Modal(
+    "Add New Document", 
+    key="new-doc-style-modal",
+    padding=20,    # default value
+    max_width=700  # default value
+)
+if new_doc_style_modal.is_open():
+    with new_doc_style_modal.container():
+        uploaded_file_style = st.file_uploader("Choose a document file",type=["docx","doc","txt","rtf","pdf"])
+        if uploaded_file_style is not None: 
+            if uploaded_file_style.type == "text/plain":
+                string_data = uploaded_file_style.read().decode("utf-8")
+            elif uploaded_file_style.type == "application/pdf":
+                pages = pdfplumber.open(uploaded_file_style).pages
+                l = list(map(lambda page:page.extract_text(),pages))
+                string_data = "\n\n".join(l)
+            else:
+                string_data =  docx2txt.process(uploaded_file_style)    
+                
+            title = uploaded_file_style.name
+            document_id = slugify(title)
+            tiktoken_encoding = tiktoken.get_encoding("cl100k_base")
+            chunks = split_string_with_limit(string_data, CHUNK_TOKEN_LEN,tiktoken_encoding)
+            if document_id in all_docs.keys():
+                st.write("Document already exists.")
+            else:
+                with st.spinner(text="Please patient,it may take some time to process the document."):
+                    all_docs[document_id] = title
+                    st.session_state.selected_docs[document_id] = title
+                    st.session_state.all_docs = all_docs 
+                    save_doc_to_vecdb(document_id,chunks)
+                    save_doc_to_db(document_id,title,"list_style")
+                    st.write("Document added successfully.")
+                    new_doc_style_modal.close()
+
 
 new_doc_modal = Modal(
     "Add New Document", 
@@ -254,7 +313,7 @@ if new_doc_modal.is_open():
                         st.session_state.selected_docs[document_id] = title
                         st.session_state.all_docs = all_docs 
                         save_doc_to_vecdb(document_id,chunks)
-                        save_doc_to_db(document_id,title)
+                        save_doc_to_db(document_id,title,"list")
                         st.write("Document added successfully.")
                         new_doc_modal.close()
 
@@ -274,7 +333,7 @@ if new_doc_modal.is_open():
                     formatter = TextFormatter()
                     formatted_transcript = formatter.format_transcript(transcript)
                         
-                    save_doc_to_db(video_id,vid_title)
+                    save_doc_to_db(video_id,vid_title,"list")
                     all_docs[video_id] = vid_title
                         
                     tiktoken_encoding = tiktoken.get_encoding("cl100k_base")
@@ -325,7 +384,14 @@ with st.sidebar:
 
   st.divider()
   st.subheader("Format & Style")
+  for idx,doc_title in st.session_state.all_style_docs.items():
+    checked = False
+    if idx in st.session_state.selected_style_docs.keys():
+        checked = True
+    st.checkbox(doc_title,checked,idx,on_change=add_selected_style_docs,args=(idx,doc_title) )
   add_new_style = st.button("Add Document",key="format-style")
+  if add_new_style:
+    new_doc_style_modal.open()
   st.divider()
 
   st.subheader("Recent")
