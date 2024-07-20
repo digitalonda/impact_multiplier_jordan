@@ -451,7 +451,7 @@ with st.sidebar:
       if bt:
         load_history(k)
 
-      st.button("Delete",key="btn-history-"+str(k),args=(k),on_click=delete_single_history)
+      st.button("Delete",key="btn-history-"+str(k),args=(k,),on_click=delete_single_history)
 
   st.divider()
   delete_history = st.button("Clear History")
