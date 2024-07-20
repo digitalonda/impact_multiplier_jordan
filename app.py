@@ -250,7 +250,7 @@ new_doc_style_modal = Modal(
 )
 if new_doc_style_modal.is_open():
     with new_doc_style_modal.container():
-        uploaded_file_style = st.file_uploader("Choose a document file",type=["docx","doc","txt","rtf","pdf"])
+        uploaded_file_style = st.file_uploader("Choose a file",type=["docx","doc","txt","rtf","pdf"])
         if uploaded_file_style is not None: 
             if uploaded_file_style.type == "text/plain":
                 string_data = uploaded_file_style.read().decode("utf-8")
@@ -265,13 +265,13 @@ if new_doc_style_modal.is_open():
             document_id = slugify(title)
             tiktoken_encoding = tiktoken.get_encoding("cl100k_base")
             chunks = split_string_with_limit(string_data, CHUNK_TOKEN_LEN,tiktoken_encoding)
-            if document_id in all_docs.keys():
+            if document_id in all_style_docs.keys():
                 st.write("Document already exists.")
             else:
                 with st.spinner(text="Please patient,it may take some time to process the document."):
                     all_docs[document_id] = title
-                    st.session_state.selected_docs[document_id] = title
-                    st.session_state.all_docs = all_docs 
+                    st.session_state.selected_style_docs[document_id] = title
+                    st.session_state.all_style_docs = all_style_docs 
                     save_doc_to_vecdb(document_id,chunks)
                     save_doc_to_db(document_id,title,"list_style")
                     st.write("Document added successfully.")
