@@ -41,8 +41,8 @@ pc = Pinecone(PINECONE_API_KEY)
 data_index = pc.Index("chatdoc")
 
 model_name = "gpt-4o"
-def send_llm(data):
-    system_prompting,messages = get_llm_prompt(data)
+def send_llm(data,format_style):
+    system_prompting,messages = get_llm_prompt(data,format_style)
     client = OpenAI(
         api_key=OPENAI_API_KEY,
     )
@@ -55,8 +55,8 @@ def send_llm(data):
     )
     return chat_completion.choices[0].message.content
 
-def send_llm_claude(data):
-    system_prompting,our_sms = get_llm_prompt(data)
+def send_llm_claude(data,format_style):
+    system_prompting,our_sms = get_llm_prompt(data,format_style)
     message = client_claude.messages.create(
     model="claude-3-5-sonnet-20240620",
     max_tokens=4096,
@@ -65,7 +65,7 @@ def send_llm_claude(data):
     )
     return message.content[0].text
 
-def get_llm_prompt(data):
+def get_llm_prompt(data,format_style):
     system_prompt = st.session_state.system_prompt
     
     if not system_prompt:
@@ -73,10 +73,16 @@ def get_llm_prompt(data):
     else:
         system_prompting = system_prompt
         if len(data): 
-             
-            system_prompting += "\n [CONTEXT] \n"
+            system_prompting += "\n [VOICE] \n"
             system_prompting += "\n\n".join(data)
-    
+
+        if len(format_style):
+            system_prompting += "\n [FORMAT & STYLE] \n"
+            system_prompting += "\n\n".join(format_style)
+            
+    print("system_prompting")
+    print(system_prompting)
+
     our_sms = st.session_state.chat_history["history"]
     our_sms = our_sms[-10:]
     return system_prompting,our_sms
@@ -269,7 +275,7 @@ if new_doc_style_modal.is_open():
             title = uploaded_file_style.name
             document_id = slugify(title)
             tiktoken_encoding = tiktoken.get_encoding("cl100k_base")
-            chunks = split_string_with_limit(string_data, CHUNK_TOKEN_LEN,tiktoken_encoding)
+            chunks = split_string_with_limit(string_data, CHUNK_TOKEN_LEN*2,tiktoken_encoding)
             if document_id in all_style_docs.keys():
                 st.write("Document already exists.")
             else:
@@ -436,10 +442,16 @@ if your_prompt:
     data = get_from_index(your_prompt_vec,filter=filter)
     data = cohere_rerank(your_prompt, data,10)
     
+    if len(st.session_state.selected_style_docs.keys())>0:
+        filter_style = get_filter_id([doc for doc in st.session_state.selected_style_docs.keys() ])
+        format_style = get_from_index(your_prompt_vec,filter=filter_style)
+    else:
+        format_style = {}
+
     if api_option == "Anthropic" :
-        response = send_llm_claude(data) 
+        response = send_llm_claude(data,format_style) 
     else:    
-        response = send_llm(data)
+        response = send_llm(data,format_style)
 
     st.session_state.chat_history["history"].append({"role": "assistant", "content": response})
 
