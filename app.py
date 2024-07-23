@@ -1,6 +1,6 @@
 from openai import OpenAI
 import streamlit as st
-from gdocs import gdocs
+
 from streamlit_modal import Modal
 from pinecone import Pinecone
 import cohere
