@@ -218,6 +218,7 @@ if not "all_style_docs" in st.session_state:
 all_docs = get_all_docs() 
 if len(all_docs)>0:
     st.session_state.all_docs = all_docs
+
 all_style_docs = get_all_style_docs() 
 if len(all_style_docs)>0:
     st.session_state.all_style_docs = all_style_docs
@@ -313,7 +314,7 @@ if new_doc_style_modal.is_open():
             else:
                 with st.spinner(text="Please patient,it may take some time to process the document."):
                     st.session_state.all_style_docs[document_id] = title
-                  
+                    st.session_state.selected_style_docs[document_id] = title
                     save_doc_to_vecdb(document_id,chunks)
                     save_doc_to_db(document_id,title,"list_style")
                     st.write("Document added successfully.")
@@ -353,7 +354,7 @@ if new_doc_modal.is_open():
                     with st.spinner(text="Please patient,it may take some time to process the document."):
                         all_docs[document_id] = title
                         st.session_state.selected_docs[document_id] = title
-                       
+                        st.session_state.all_docs[document_id] = title
                         save_doc_to_vecdb(document_id,chunks)
                         save_doc_to_db(document_id,title,"list")
                         st.write("Document added successfully.")
