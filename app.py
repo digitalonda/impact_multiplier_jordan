@@ -158,13 +158,6 @@ def slugify(s):
   s = re.sub(r'^-+|-+$', '', s)
   return s
 
-def get_gdoc(url):
-    creds = gdocs.gdoc_creds()
-    document_id = gdocs.extract_document_id(url)
-    chunks = gdocs.read_gdoc_content(creds,document_id)
-    title = gdocs.read_gdoc_title(creds,document_id)
-    return document_id,title,chunks
-
 def extract_youtube_id(url):
     pattern = (
         r'(?:https?://)?(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/|youtube\.com/embed/|youtube\.com/v/|youtube\.com/shorts/|youtube\.com/clip/|youtube\.com/user/.*#p/u/\d+/|youtube\.com/attribution_link\?a=|youtube\.com/.*#.*|youtube\.com/live/|youtube\.com/video/|youtube\.com/clip/|youtube\.com/.*#.*|youtube\.com/user/[^/]+/.*#.*|youtube\.com/[^/]+/[^/]+/[^/]+/|youtube\.com/.*\?v=|youtube\.com/.*\?clip_id=)([a-zA-Z0-9_-]{11})'
@@ -183,7 +176,6 @@ def load_history(k):
         idx = int(x["metadata"]["order"]) - 1
         new_history["history"].insert(idx,{"role":x["metadata"]["role"],"content":x["metadata"]["text"]} )
 
-    
     st.session_state.chat_history = new_history
      
 def delete_docs(doc_id,doc_nsp="default",doc_list_nsp="list"):
@@ -210,7 +202,7 @@ def delete_single_history(chat_id):
     
     if len(d1)>0:
         data_index.delete(d1, namespace=nsp)
-    data_index.delete([str(int(chat_id))], namespace=list_nsp)
+    data_index.delete([chat_id], namespace=list_nsp)
     st.session_state.all_chat_history.pop(chat_id)
 
 if not "all_docs" in st.session_state:
@@ -489,11 +481,11 @@ if your_prompt:
     save_prompt = {"id":str(st.session_state.chat_history["id"])+"_"+str(order),"values":your_prompt_vec,"metadata":{"chat_id":st.session_state.chat_history["id"],"order":order,"role":"user","text":your_prompt}}
 
     data = get_from_index(your_prompt_vec,filter=filter)
-    data = cohere_rerank(your_prompt, data,15)
+    data = cohere_rerank(your_prompt, data,20)
     
     if len(st.session_state.selected_style_docs.keys())>0:
         filter_style = get_filter_id([doc for doc in st.session_state.selected_style_docs.keys() ])
-        format_style = get_from_index(your_prompt_vec,filter=filter_style)
+        format_style = get_from_index(your_prompt_vec,20,filter=filter_style)
     else:
         format_style = {}
 
