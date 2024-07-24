@@ -229,8 +229,10 @@ def retrive_selected_docs():
     
     if len(sd) > 0:
         sd = sd[0]
-        keys = sd["metadata"]["keys"].split(",")
-        values = sd["metadata"]["values"].split(",")
+        keys = sd["metadata"]["keys"].strip().split(",")
+        keys = [x for x in keys if x]
+        values = sd["metadata"]["values"].strip().split(",")
+        values = [x for x in values if x]
         for idx,key in enumerate(keys):
             st.session_state.selected_docs[key] = values[idx]
 
@@ -239,8 +241,10 @@ def retrive_selected_style_docs():
     
     if len(sd) > 0:
         sd = sd[0]
-        keys = sd["metadata"]["keys"].split(",")
-        values = sd["metadata"]["values"].split(",")
+        keys = sd["metadata"]["keys"].strip().split(",")
+        keys = [x for x in keys if x]
+        values = sd["metadata"]["values"].strip().split(",")
+        values = [x for x in values if x]
         for idx,key in enumerate(keys):
             st.session_state.selected_docs[key] = values[idx]
 
