@@ -107,7 +107,7 @@ def get_from_index_raw(vec,top_k=20,nsp="default",filter={}):
                             filter=filter
                             )
     return res["matches"]
-def get_from_index(vec,top_k=20,nsp="default",filter={}):
+def get_from_index(vec,top_k=30,nsp="default",filter={}):
     res_matches = get_from_index_raw(vec,top_k,nsp,filter)
     docs = [x["metadata"]['text'] for x in res_matches]
     if nsp == "list" or nsp == "list_style" or nsp=="chat_history_list":
