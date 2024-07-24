@@ -120,7 +120,6 @@ def get_from_index(vec,top_k=40,nsp="default",filter={}):
 def get_filter_id(doc_ids):
     return {"doc_id": {"$in": doc_ids}}
  
-
 def get_all_docs():
     docs = get_from_index(default_vec_embedding,1000,"list")
     return docs
@@ -201,7 +200,7 @@ def delete_single_history(chat_id):
     
     if len(d1)>0:
         data_index.delete(d1, namespace=nsp)
-    data_index.delete([chat_id], namespace=list_nsp)
+    data_index.delete([str(int(chat_id))], namespace=list_nsp)
     st.session_state.all_chat_history.pop(chat_id)
 
 if not "all_docs" in st.session_state:
