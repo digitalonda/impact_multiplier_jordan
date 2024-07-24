@@ -206,7 +206,7 @@ def retrive_selected_docs():
 
 def retrive_selected_style_docs():
     sd = get_from_index_raw(default_vec_embedding,top_k=1,nsp="selected_style_doc")
-    
+     
     if len(sd) > 0:
         sd = sd[0]
         keys = sd["metadata"]["keys"].strip().split(",")
@@ -214,8 +214,8 @@ def retrive_selected_style_docs():
         values = sd["metadata"]["values"].strip().split(",")
         values = [x for x in values if x]
         for idx,key in enumerate(keys):
-            st.session_state.selected_docs[key] = values[idx]
-
+            st.session_state.selected_style_docs[key] = values[idx]
+      
 def save_selected_docs():
     metadata = {"keys": ",".join(st.session_state.selected_docs.keys()),"values": ",".join(st.session_state.selected_docs.values())}
     data = [{ "id": "selected_doc", "values":default_vec_embedding, "metadata": metadata}]
