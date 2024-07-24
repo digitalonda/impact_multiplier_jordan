@@ -65,8 +65,7 @@ def send_llm(data,format_style):
 
 def send_llm_claude(data,format_style):
     system_prompting,our_sms = get_llm_prompt(data,format_style)
-    st.write(system_prompting)
-    st.write(our_sms)
+    
     message = client_claude.messages.create(
     model="claude-3-5-sonnet-20240620",
     max_tokens=4096,
