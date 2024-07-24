@@ -191,30 +191,6 @@ def delete_docs(doc_id,doc_nsp="default",doc_list_nsp="list"):
         remove_selected_docs(doc_id)
     elif (doc_list_nsp == "list_style"):
         remove_selected_style_docs(doc_id)
-             
-def delete_single_history(chat_id):
-    nsp="chat_history"
-    list_nsp="chat_history_list"
-    l1 = get_from_index_raw(default_vec_embedding,1000,nsp,filter={"chat_id":chat_id}) 
-    d1 = [x["id"] for x in l1]
-    
-    if len(d1)>0:
-        data_index.delete(d1, namespace=nsp)
-    data_index.delete([str(int(chat_id))], namespace=list_nsp)
-    st.session_state.all_chat_history.pop(chat_id)
-
-if not "all_docs" in st.session_state:
-    st.session_state.all_docs = {}
-if not "all_style_docs" in st.session_state:
-    st.session_state.all_style_docs = {}
-
-all_docs = get_all_docs() 
-if len(all_docs)>0:
-    st.session_state.all_docs = all_docs
-
-all_style_docs = get_all_style_docs() 
-if len(all_style_docs)>0:
-    st.session_state.all_style_docs = all_style_docs
 
 def retrive_selected_docs():
     sd = get_from_index_raw(default_vec_embedding,top_k=1,nsp="selected_doc")
@@ -270,14 +246,6 @@ def remove_selected_style_docs(idx):
         st.session_state.selected_style_docs.pop(idx)
         save_selected_style_docs()
 
-if not "selected_docs" in st.session_state:
-    st.session_state.selected_docs = {}
-retrive_selected_docs()
-
-if not "selected_style_docs" in st.session_state:
-    st.session_state.selected_style_docs = {}
-retrive_selected_style_docs()
-
 
 def retrive_system_prompt():
     sd = get_from_index_raw(default_vec_embedding,top_k=1,nsp="system_prompt")
@@ -286,6 +254,39 @@ def retrive_system_prompt():
         return sd["metadata"]["text"] 
     else:
         return '''You are an AI Assistant specialized in creating social media captions. Based on the style of the example posts provided in CONTEXT below, craft a caption using the content input by the user.'''    
+
+
+def delete_single_history(chat_id):
+    nsp="chat_history"
+    list_nsp="chat_history_list"
+    l1 = get_from_index_raw(default_vec_embedding,1000,nsp,filter={"chat_id":chat_id}) 
+    d1 = [x["id"] for x in l1]
+    
+    if len(d1)>0:
+        data_index.delete(d1, namespace=nsp)
+    data_index.delete([str(int(chat_id))], namespace=list_nsp)
+    st.session_state.all_chat_history.pop(chat_id)
+
+if not "selected_docs" in st.session_state:
+    st.session_state.selected_docs = {}
+retrive_selected_docs()
+
+if not "selected_style_docs" in st.session_state:
+    st.session_state.selected_style_docs = {}
+retrive_selected_style_docs()
+
+if not "all_docs" in st.session_state:
+    st.session_state.all_docs = {}
+if not "all_style_docs" in st.session_state:
+    st.session_state.all_style_docs = {}
+
+all_docs = get_all_docs() 
+if len(all_docs)>0:
+    st.session_state.all_docs = all_docs
+
+all_style_docs = get_all_style_docs() 
+if len(all_style_docs)>0:
+    st.session_state.all_style_docs = all_style_docs
 
 new_doc_style_modal = Modal(
     "Add New Document", 
