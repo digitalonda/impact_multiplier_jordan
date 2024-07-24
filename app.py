@@ -190,9 +190,10 @@ def delete_docs(doc_id,doc_nsp="default",doc_list_nsp="list"):
      # delete from index
     d1 = [x["id"] for x in l1]
     d2 = [x["id"] for x in l2]
-     
-    data_index.delete(d1, namespace=doc_nsp)
-    data_index.delete(d2, namespace=doc_list_nsp)
+    if len(d1)>0: 
+        data_index.delete(d1, namespace=doc_nsp)
+    if len(d2)>0: 
+        data_index.delete(d2, namespace=doc_list_nsp)
 
     if (doc_list_nsp == "list"):
         remove_selected_docs(doc_id)
