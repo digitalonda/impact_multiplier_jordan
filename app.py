@@ -32,7 +32,7 @@ COHERE_API_KEY = st.secrets['COHERE_API_KEY']
 
 PINECONE_APP_NAME = st.secrets['PINECONE_APP_NAME']  
 
-CHUNK_TOKEN_LEN = 1024  
+CHUNK_TOKEN_LEN = 512  
 
 cohere_client = cohere.Client(COHERE_API_KEY)
 def cohere_rerank(query: str,docs, top_n=6):
@@ -107,7 +107,7 @@ def get_from_index_raw(vec,top_k=20,nsp="default",filter={}):
                             filter=filter
                             )
     return res["matches"]
-def get_from_index(vec,top_k=30,nsp="default",filter={}):
+def get_from_index(vec,top_k=40,nsp="default",filter={}):
     res_matches = get_from_index_raw(vec,top_k,nsp,filter)
     docs = [x["metadata"]['text'] for x in res_matches]
     if nsp == "list" or nsp == "list_style" or nsp=="chat_history_list":
@@ -479,7 +479,7 @@ if your_prompt:
     save_prompt = {"id":str(st.session_state.chat_history["id"])+"_"+str(order),"values":your_prompt_vec,"metadata":{"chat_id":st.session_state.chat_history["id"],"order":order,"role":"user","text":your_prompt}}
 
     data = get_from_index(your_prompt_vec,filter=filter)
-    data = cohere_rerank(your_prompt, data,10)
+    data = cohere_rerank(your_prompt, data,15)
     
     if len(st.session_state.selected_style_docs.keys())>0:
         filter_style = get_filter_id([doc for doc in st.session_state.selected_style_docs.keys() ])
