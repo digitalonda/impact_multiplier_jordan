@@ -194,7 +194,7 @@ def delete_docs(doc_id,doc_nsp="default",doc_list_nsp="list"):
 
 def retrive_selected_docs():
     sd = get_from_index_raw(default_vec_embedding,top_k=1,nsp="selected_doc")
-    st.write(sd)
+    
     if len(sd) > 0:
         sd = sd[0]
         keys = sd["metadata"]["keys"].strip().split(",")
