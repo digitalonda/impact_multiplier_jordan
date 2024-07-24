@@ -422,7 +422,7 @@ with st.sidebar:
     if idx in st.session_state.selected_docs.keys():
         checked = True
     st.checkbox(doc_title,checked,idx,on_change=add_selected_docs,args=(idx,doc_title) )
-    st.button("Delete",key="btn-"+idx,args=(idx,),on_click=delete_docs)
+    st.button("Delete",key="btn-"+idx,args=(idx,"default","list"),on_click=delete_docs)
      
 
   add_new_doc = st.button("Add Document",key="voice")
