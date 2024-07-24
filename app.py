@@ -435,8 +435,8 @@ with st.sidebar:
     checked = False
     if idx in st.session_state.selected_style_docs.keys():
         checked = True
-    st.checkbox(doc_title,checked,idx,on_change=add_selected_style_docs,args=(idx,doc_title) )
-    st.button("Delete",key="btn-"+idx,args=(idx,"default","list_style"),on_click=delete_docs)
+    st.checkbox(doc_title,checked,"style-"+str(idx),on_change=add_selected_style_docs,args=(idx,doc_title) )
+    st.button("Delete",key="btn-style-"+idx,args=(idx,"default","list_style"),on_click=delete_docs)
 
   add_new_style = st.button("Add Document",key="format-style")
   if add_new_style:
