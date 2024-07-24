@@ -257,6 +257,8 @@ def add_selected_docs(idx,doc_title):
     st.session_state.selected_docs[idx] = doc_title
     save_selected_docs()
 def remove_selected_docs(idx):
+    if idx in st.session_state.all_docs.keys():
+        st.session_state.all_docs.pop(idx)
     if idx in st.session_state.selected_docs.keys():
         st.session_state.selected_docs.pop(idx)
         save_selected_docs()
@@ -266,6 +268,8 @@ def add_selected_style_docs(idx,doc_title):
     save_selected_style_docs()
 
 def remove_selected_style_docs(idx):
+    if idx in st.session_state.all_style_docs.keys():
+        st.session_state.all_style_docs.pop(idx)
     if idx in st.session_state.selected_style_docs.keys():
         st.session_state.selected_style_docs.pop(idx)
         save_selected_style_docs()
