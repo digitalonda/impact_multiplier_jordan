@@ -320,6 +320,7 @@ if new_doc_style_modal.is_open():
                     save_doc_to_vecdb(document_id,chunks)
                     save_doc_to_db(document_id,title,"list_style")
                     st.write("Document added successfully.")
+                    save_selected_style_docs()
                     new_doc_style_modal.close()
 
 
@@ -360,6 +361,7 @@ if new_doc_modal.is_open():
                         save_doc_to_vecdb(document_id,chunks)
                         save_doc_to_db(document_id,title,"list")
                         st.write("Document added successfully.")
+                        save_selected_docs()
                         new_doc_modal.close()
 
         with tab2:
